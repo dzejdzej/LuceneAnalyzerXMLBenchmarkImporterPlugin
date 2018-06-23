@@ -38,6 +38,8 @@ public class XMLBenchmarkImporter   {  /*} implements BenchmarkImporter */
 		InputStreamReader reader = new InputStreamReader(new FileInputStream(file));
 		Queries q = (Queries) importer.parseViaJaxb(Queries.class, reader);
 		q.toString();
+		
+		
 	}
 
 }
