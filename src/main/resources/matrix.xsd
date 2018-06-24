@@ -10,7 +10,7 @@
 					<xs:element name="matrix-query">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="matrix-document">
+								<xs:element name="matrix-document" maxOccurs="unbounded" minOccurs="0">
 									<xs:complexType>
 										<xs:simpleContent>
 											<xs:extension base="xs:string">

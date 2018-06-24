@@ -7,10 +7,10 @@
 	<xs:element name="documents">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="document">
+				<xs:element name="document"  maxOccurs="unbounded" minOccurs="0">
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element name="sentence">
+							<xs:element name="sentence"  maxOccurs="unbounded" minOccurs="0">
 								<xs:complexType>
 									<xs:simpleContent>
 										<xs:extension base="xs:string">

@@ -6,6 +6,10 @@
 	<version>1.0.0</version>
 	<name>XMLBenchmarkImporter</name>
 	<description>Imports a benchmark from a ZIP containing XML files</description>
+	<properties>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+	</properties>
 	<dependencies>
 		<!--jaxb support -->
 		<dependency>
@@ -22,6 +26,11 @@
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-core</artifactId>
 			<version>2.2.11</version>
+		</dependency>
+		<dependency>
+			<groupId>rs.ac.uns.ftn</groupId>
+			<artifactId>benchmark.importer.core</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -40,6 +49,13 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<repositories>
+		<repository>
+			<id>local-maven-repo</id>
+			<url>file:///${project.basedir}/local</url>
+		</repository>
+	</repositories>
 </project>
 
 	
