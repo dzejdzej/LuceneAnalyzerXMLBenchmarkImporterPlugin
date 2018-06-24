@@ -74,20 +74,20 @@ public class XMLBenchmarkImporter implements BenchmarkImporter {
 		// List<String> fileNames = ZipReader.getZippedFileNames(new
 		// FileInputStream("test.zip"));
 		//
-		// System.out.println("Values:" + String.join(",", fileNames));
+		// // System.out.println("Values:" + String.join(",", fileNames));
 		//
 		// List<String> filePaths = ZipReader.readZipFile(new
 		// FileInputStream("test.zip"), "output");
-		// System.out.println("Values:" + String.join(",", filePaths));
+		// // System.out.println("Values:" + String.join(",", filePaths));
 
 		boolean valid = importer.canImport(new FileInputStream("test2.zip"));
-		System.out.println("Is this a vali zip? " + valid);
+		// System.out.println("Is this a vali zip? " + valid);
 		if (!valid) {
 			// 400 bad request.
 		}
 		String dirPath = "output";
 		ImportedBenchmarkModel model = importer.importBenchmark(dirPath, new FileInputStream("lightweight.zip"));
-		System.out.println(model);
+		// System.out.println(model);
 	}
 
 	@Override
@@ -140,7 +140,7 @@ public class XMLBenchmarkImporter implements BenchmarkImporter {
 				if(! (tag instanceof MatrixQuery)) {
 					continue;
 				}
-				System.out.println("le document:" + ((MatrixQuery)tag).getId());
+				//// System.out.println("le document:" + ((MatrixQuery)tag).getId());
 				// for each document, extract and store its Text into a file with the following format
 				// ID-TIMESTAMP.txt
 				ImportedQuery connected = processMatrixQuery((MatrixQuery)tag, queryMap, documentMap);
@@ -199,7 +199,7 @@ public class XMLBenchmarkImporter implements BenchmarkImporter {
 				if(! (tag instanceof Query)) {
 					continue;
 				}
-				System.out.println("le document:" + ((Query)tag).getId());
+				// System.out.println("le document:" + ((Query)tag).getId());
 				// for each document, extract and store its Text into a file with the following format
 				// ID-TIMESTAMP.txt
 				ImportedQuery query = processSingleQuery((Query)tag, documentDirPath);
@@ -243,7 +243,7 @@ public class XMLBenchmarkImporter implements BenchmarkImporter {
 				if(! (tag instanceof Document)) {
 					continue;
 				}
-				System.out.println("le document:" + ((Document)tag).getId());
+				// System.out.println("le document:" + ((Document)tag).getId());
 				// for each document, extract and store its Text into a file with the following format
 				// ID-TIMESTAMP.txt
 				ImportedRelevantDocument document = processSingleDocument((Document)tag, documentDirPath);
@@ -338,15 +338,15 @@ public class XMLBenchmarkImporter implements BenchmarkImporter {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("Values:" + String.join(",", filePaths));
-		System.out.println("Attempt to import each one?");
+		// System.out.println("Values:" + String.join(",", filePaths));
+		// System.out.println("Attempt to import each one?");
 		try {
 			FileInputStream inputStream = new FileInputStream("F:\\UDD\\xml.benchmark.importer\\output\\Matrix.xml");
 			PartialUnmarshaller partialUnmarshaller = new PartialUnmarshaller<>(inputStream, MatrixQuery.class);
 			while (partialUnmarshaller.hasNext()) {
 				Object tag = partialUnmarshaller.next();
 				if (tag instanceof MatrixQuery) {
-					System.out.println("le document:" + ((MatrixQuery) tag).getId());
+					// System.out.println("le document:" + ((MatrixQuery) tag).getId());
 				}
 
 			}
@@ -358,7 +358,7 @@ public class XMLBenchmarkImporter implements BenchmarkImporter {
 			// while(partialUnmarshaller.hasNext()) {
 			// Object tag = partialUnmarshaller.next();
 			// if(tag instanceof Document) {
-			// System.out.println("le document:" + ((Document)tag).getId());
+			// // System.out.println("le document:" + ((Document)tag).getId());
 			// }
 			//
 			// }
@@ -370,8 +370,8 @@ public class XMLBenchmarkImporter implements BenchmarkImporter {
 			// while(partialUnmarshaller.hasNext()) {
 			// Object tag = partialUnmarshaller.next();
 			// if(tag instanceof Query) {
-			// System.out.println("le document:" + ((Query)tag).getId());
-			// System.out.println("query");
+			// // System.out.println("le document:" + ((Query)tag).getId());
+			// // System.out.println("query");
 			// }
 			//
 			// }
@@ -380,7 +380,7 @@ public class XMLBenchmarkImporter implements BenchmarkImporter {
 			// InputStreamReader(new
 			// FileInputStream("F:\\UDD\\xml.benchmark.importer\\output\\Documents.xml")));
 			// for(Document doc : docs.getDocument()) {
-			// System.out.println("doc" + doc.getId());
+			// // System.out.println("doc" + doc.getId());
 
 			// }
 		} catch (FileNotFoundException e) {
