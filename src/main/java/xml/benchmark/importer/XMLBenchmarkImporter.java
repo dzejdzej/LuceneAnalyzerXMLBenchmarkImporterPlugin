@@ -1,13 +1,13 @@
 package xml.benchmark.importer;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PipedWriter;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,6 +20,13 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Font.FontFamily;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfWriter;
+
 import benchmark.importer.core.contract.BenchmarkImporter;
 import benchmark.importer.core.model.ImportedBenchmarkModel;
 import benchmark.importer.core.model.ImportedQuery;
@@ -29,6 +36,7 @@ import xml.benchmark.importer.model.Matrix.MatrixQuery;
 import xml.benchmark.importer.model.Matrix.MatrixQuery.MatrixDocument;
 import xml.benchmark.importer.model.Queries.Query;
 
+// xml.benchmark.importer.XMLBenchmarkImporter
 public class XMLBenchmarkImporter implements BenchmarkImporter {
 
 	JAXBContext jaxbContext;
@@ -254,19 +262,45 @@ public class XMLBenchmarkImporter implements BenchmarkImporter {
 		return documentMap;
 	}
 
+	private void convertFileToPDF(String content, String filePath) throws DocumentException, IOException {
+		InputStream is = new ByteArrayInputStream(content.getBytes("UTF-8"));
+		FileOutputStream fos = new FileOutputStream(filePath);
+		com.itextpdf.text.Document document = new com.itextpdf.text.Document();
+		PdfWriter writer = PdfWriter.getInstance(document, fos);
+		document.open();
+		PdfContentByte cb = writer.getDirectContent();
+		document.newPage();
+		Paragraph p;
+        Font normal = new Font(FontFamily.TIMES_ROMAN, 12);
+        p = new Paragraph(content, normal);
+        
+        document.add(p);
+        
+		fos.flush();
+		document.close();
+		fos.close();
+	}
+	
 	private ImportedRelevantDocument processSingleDocument(Document tag, String documentDirPath)
-			throws FileNotFoundException {
+			throws DocumentException, IOException {
 		// for each document, extract and store its Text into a file with the following
 		// format
 		// ID-TIMESTAMP.txta
 		ImportedRelevantDocument importedDocument = new ImportedRelevantDocument();
 
-		String fileName = "imported-document-" + tag.getId() + "-" + System.currentTimeMillis() + ".txt";
+		String fileName = "imported-document-" + tag.getId() + "-" + System.currentTimeMillis() + ".pdf";
 		String filePath = documentDirPath + File.separator + fileName;
 		String txtContent = TextExtractor.extractText(tag);
-		PrintWriter printer = new PrintWriter(filePath);
-		printer.print(txtContent);
-		printer.close();
+		
+		/////////////////////////////////////////////
+		//  FI L E S HAVE TO BVE CONVERTED TO PDF DUE TO
+	 	convertFileToPDF(txtContent, filePath);
+		
+		
+		// 
+//		PrintWriter printer = new PrintWriter(filePath);
+//		printer.print(txtContent);
+//		printer.close();
 
 		importedDocument.setPath(filePath);
 		importedDocument.setId(tag.getId());
