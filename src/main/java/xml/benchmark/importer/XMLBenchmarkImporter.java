@@ -26,6 +26,7 @@ import benchmark.importer.core.model.ImportedQuery;
 import benchmark.importer.core.model.ImportedRelevantDocument;
 import xml.benchmark.importer.model.Documents.Document;
 import xml.benchmark.importer.model.Matrix.MatrixQuery;
+import xml.benchmark.importer.model.Matrix.MatrixQuery.MatrixDocument;
 import xml.benchmark.importer.model.Queries.Query;
 
 public class XMLBenchmarkImporter implements BenchmarkImporter {
@@ -77,8 +78,8 @@ public class XMLBenchmarkImporter implements BenchmarkImporter {
 			// 400 bad request.
 		}
 		String dirPath = "output";
-		importer.importBenchmark(dirPath, new FileInputStream("lightweight.zip"));
-
+		ImportedBenchmarkModel model = importer.importBenchmark(dirPath, new FileInputStream("lightweight.zip"));
+		System.out.println(model);
 	}
 
 	@Override
@@ -102,7 +103,7 @@ public class XMLBenchmarkImporter implements BenchmarkImporter {
 		// extract Text from each Document
 		// store its path on disk,
 		// use its ID as key
-		Map<Integer, ImportedRelevantDocument> documentMap = processDocuments(documentsXML, documentDirPath);
+		Map<Long, ImportedRelevantDocument> documentMap = processDocuments(documentsXML, documentDirPath);
 		Map<Long, ImportedQuery> queryMap = processQueries(queriesXML, documentDirPath);
 		List<ImportedQuery> processedQueries = connectQueriesWithDocuments(documentMap, queryMap, matrixXML);
 				
@@ -117,9 +118,10 @@ public class XMLBenchmarkImporter implements BenchmarkImporter {
 	}
 
 
-	private List<ImportedQuery> connectQueriesWithDocuments(Map<Integer, ImportedRelevantDocument> documentMap,
+	private List<ImportedQuery> connectQueriesWithDocuments(Map<Long, ImportedRelevantDocument> documentMap,
 			Map<Long, ImportedQuery> queryMap, String matrixXML) {
 		
+		List<ImportedQuery> connectedQueries = new ArrayList<>();
 		FileInputStream inputStream = null;
 		// due to LARGE xml files, process XML file in chunks, 1 Document at a time
 		try {
@@ -133,7 +135,8 @@ public class XMLBenchmarkImporter implements BenchmarkImporter {
 				System.out.println("le document:" + ((MatrixQuery)tag).getId());
 				// for each document, extract and store its Text into a file with the following format
 				// ID-TIMESTAMP.txt
-				processMatrixQuery((MatrixQuery)tag, queryMap, documentMap);
+				ImportedQuery connected = processMatrixQuery((MatrixQuery)tag, queryMap, documentMap);
+				connectedQueries.add(connected);
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -146,23 +149,28 @@ public class XMLBenchmarkImporter implements BenchmarkImporter {
 		}	
 		
 		
-		return null;
+		return connectedQueries;
 	}
 
 
-	private void processMatrixQuery(MatrixQuery tag, Map<Long, ImportedQuery> queryMap,
-			Map<Integer, ImportedRelevantDocument> documentMap) {
-		if(queryMap.containsKey(tag.getId())) {
+	private ImportedQuery processMatrixQuery(MatrixQuery tag, Map<Long, ImportedQuery> queryMap,
+			Map<Long, ImportedRelevantDocument> documentMap) {
+		if(!queryMap.containsKey(tag.getId())) {
 			throw new IllegalStateException("Invalid <matrix-query encountered, no query for ID:" + tag.getId());
 		}
 		
 		ImportedQuery query = queryMap.get(tag.getId());
+		for(MatrixDocument doc : tag.getMatrixDocument() ) {
+			ImportedRelevantDocument relevantDoc = documentMap.get(doc.getId());
+			query.getRelevantDocumentsMeta().add(relevantDoc);
+			query.getRelevantDocumentsPath().add(relevantDoc.getPath());
+		}
 		
-		
+		return query;
 		
 	}
 
-	private List<String> getAllDocumentsPath(Map<Integer, ImportedRelevantDocument> documentMap) {
+	private List<String> getAllDocumentsPath(Map<Long, ImportedRelevantDocument> documentMap) {
 		List<String> paths = new ArrayList<>();
 		
 		for(ImportedRelevantDocument document : documentMap.values()) {
@@ -215,8 +223,8 @@ public class XMLBenchmarkImporter implements BenchmarkImporter {
 		
 	}
 
-	private Map<Integer, ImportedRelevantDocument> processDocuments(String documentsXML, String documentDirPath) {
-		Map<Integer, ImportedRelevantDocument> documentMap = new HashMap<Integer, ImportedRelevantDocument>();
+	private Map<Long, ImportedRelevantDocument> processDocuments(String documentsXML, String documentDirPath) {
+		Map<Long, ImportedRelevantDocument> documentMap = new HashMap<Long, ImportedRelevantDocument>();
 		FileInputStream inputStream = null;
 		// due to LARGE xml files, process XML file in chunks, 1 Document at a time
 		try {

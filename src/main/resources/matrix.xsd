@@ -14,13 +14,13 @@
 									<xs:complexType>
 										<xs:simpleContent>
 											<xs:extension base="xs:string">
-												<xs:attribute type="xs:int" name="id" />
+												<xs:attribute type="xs:long" name="id" />
 											</xs:extension>
 										</xs:simpleContent>
 									</xs:complexType>
 								</xs:element>
 							</xs:sequence>
-							<xs:attribute type="xs:int" name="id" />
+							<xs:attribute type="xs:long" name="id" />
 						</xs:complexType>
 					</xs:element>
 				</xs:sequence>
